@@ -4,12 +4,9 @@ from npw import base
 from npw.db.property import Property
 
 
-class PropertyCategory(base.BaseObject):
+class PropertyCategory(base.BaseWrapperObject):
     def __init__(self, nw_propgroup):
-        self._wrapped = nw_propgroup
-
-    def __repr__(self, data=None):
-        return base.BaseObject.__repr__(self, self._wrapped.ToString())
+        base.BaseWrapperObject.__init__(self, nw_propgroup)
 
     @property
     def properties(self):

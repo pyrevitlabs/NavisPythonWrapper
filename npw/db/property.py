@@ -4,9 +4,9 @@ from npw import base
 from npw import API
 
 
-class Property(base.BaseObject):
+class Property(base.BaseWrapperObject):
     def __init__(self, nw_dataprop):
-        self._wrapped = nw_dataprop
+        base.BaseWrapperObject.__init__(self, nw_dataprop)
 
     @property
     def value(self):
