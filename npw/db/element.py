@@ -1,24 +1,33 @@
 """Wrapper for Navisworks.Api.ModelItem."""
 
 from npw import base
-from npw.db.property import Property
+from npw.db.propertygroup import PropertyCategory
 
 
 class Element(base.BaseObject):
     def __init__(self, nw_modelitem):
-        self._wrapped_mi = nw_modelitem
+        self._wrapped = nw_modelitem
 
     def __repr__(self, data=None):
-        return base.BaseObject.__repr__(self, self._wrapped_mi.ToString())
+        return base.BaseObject.__repr__(self, self._wrapped.ToString())
 
-    def _lookup_param(self, param_name):
-        for pc in self._wrapped_mi.PropertyCategories:
-            for dp in pc.Properties:
-                if dp.DisplayName == param_name \
-                        or dp.Name == param_name:
-                    return dp
+    @property
+    def property_categories(self):
+        return self._wrapped.PropertyCategories
+
+    def _lookup_propcat(self, param_name):
+        for pc in self.property_categories:
+            if pc.DisplayName == param_name \
+                    or pc.Name == param_name:
+                return pc
 
     def __getitem__(self, param_name):
-        prop = self._lookup_param(param_name)
-        if prop:
-            return Property(prop)
+        pcat = self._lookup_propcat(param_name)
+        if pcat:
+            return PropertyCategory(pcat)
+
+        raise AttributeError('Property category does not exist: {}'
+                             .format(param_name))
+
+    def __contains__(self, key):
+            return key in [x.DisplayName for x in self.property_categories]
